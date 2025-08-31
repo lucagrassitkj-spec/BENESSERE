@@ -1,0 +1,39 @@
+name: Nutrition Flash
+
+on:
+  schedule:
+    - cron: "0 10 */3 * *"  # Ogni 3 giorni alle 12:00 ora italiana
+  workflow_dispatch:
+
+jobs:
+  nutrition:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt trafilatura feedparser pyyaml
+
+      - name: Run summarizer
+        run: python nutrition_summarizer.py
+
+      - name: Send only links with preview to Telegram
+        run: |
+          for file in output/*.txt; do
+            echo "Invio solo link con preview da $file a Telegram..."
+            while IFS= read -r line; do
+              if [[ "$line" =~ ^https?:// ]]; then
+                curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage                   -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }}                   -d text="$line"
+                sleep 2
+              fi
+            done < "$file"
+          done
