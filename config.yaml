@@ -1,0 +1,16 @@
+lookback_hours: 72  # articoli delle ultime 72 ore
+max_per_category: 2
+
+categories:
+  - name: EatingWell
+    feeds:
+      - "https://www.eatingwell.com/rss"
+  - name: Melarossa
+    feeds:
+      - "https://www.melarossa.it/rss/"
+  - name: Tvoy Doktor
+    feeds:
+      - "https://tvoydoctor.ru/rss/"
+  - name: Healthline
+    feeds:
+      - "https://www.healthline.com/rss"
